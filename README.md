@@ -21,55 +21,93 @@
 
 ---
 
+## Setup
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/sp7412/servicetitan-ml-portfolio
+cd servicetitan-ml-portfolio
+```
+
+### 2. Create and activate a virtual environment
+
+**macOS / Linux**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows (Command Prompt)**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+**Windows (PowerShell)**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+> You should see `(.venv)` at the start of your terminal prompt once activated.
+
+### 3. Install dependencies
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 4. Register the venv as a Jupyter kernel
+
+This makes the venv available as a kernel inside Jupyter so the notebooks use the right packages:
+
+```bash
+pip install ipykernel
+python -m ipykernel install --user --name=servicetitan-ml --display-name "Python (servicetitan-ml)"
+```
+
+### 5. Launch Jupyter
+
+```bash
+jupyter notebook
+```
+
+Open any notebook and select **Kernel → Change kernel → Python (servicetitan-ml)**.
+
+---
+
 ## Notebook 01: Real Dataset
 
-Notebook 01 uses the **IBM Telco Customer Churn** dataset — the standard churn benchmark.
+Notebook 01 uses the **IBM Telco Customer Churn** dataset — the standard churn benchmark. The notebook runs without it (generates a faithful reproduction automatically), but to use the real data:
 
-To use the real data:
 ```bash
 # Option 1: Kaggle CLI
+pip install kaggle
 kaggle datasets download -d blastchar/telco-customer-churn --unzip
 
 # Option 2: Manual download
 # https://www.kaggle.com/datasets/blastchar/telco-customer-churn
-# Save as: WA_Fn-UseC_-Telco-Customer-Churn.csv in the repo root
+# Save as WA_Fn-UseC_-Telco-Customer-Churn.csv in the repo root
 ```
 
-The notebook auto-detects the file. If not present, it generates a statistically faithful reproduction (same schema and distributions) so all code runs identically.
-
-All other notebooks use synthetic data generated inline.
+All other notebooks use synthetic data generated inline — no downloads needed.
 
 ---
 
-## Setup
+## Deactivating the venv
+
+When you're done:
 
 ```bash
-git clone https://github.com/<your-username>/servicetitan-ml-portfolio
-cd servicetitan-ml-portfolio
-pip install -r requirements.txt
-jupyter notebook
+deactivate
 ```
 
----
+To remove it entirely:
 
-## Requirements
-
-```
-numpy
-pandas
-scikit-learn
-xgboost
-lightgbm
-shap
-matplotlib
-seaborn
-scipy
-jupyter
-```
-
-Install all at once:
 ```bash
-pip install -r requirements.txt
+rm -rf .venv
 ```
 
 ---
