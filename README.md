@@ -23,58 +23,62 @@
 
 ## Setup
 
-### 1. Clone the repo
+### 1. Install uv
+
+If you don't have `uv` yet:
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via pip
+pip install uv
+```
+
+### 2. Clone the repo
 
 ```bash
 git clone https://github.com/sp7412/servicetitan-ml-portfolio
 cd servicetitan-ml-portfolio
 ```
 
-### 2. Create and activate a virtual environment
-
-**macOS / Linux**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-**Windows (Command Prompt)**
-```cmd
-python -m venv .venv
-.venv\Scripts\activate.bat
-```
-
-**Windows (PowerShell)**
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-> You should see `(.venv)` at the start of your terminal prompt once activated.
-
-### 3. Install dependencies
+### 3. Create the environment and install dependencies
 
 ```bash
-pip install --upgrade pip
-pip install -r requirements.txt
+uv venv
+uv pip install -r requirements.txt
 ```
 
-### 4. Register the venv as a Jupyter kernel
+This creates a `.venv` in the project directory and installs all packages into it. No `activate` needed for most commands — `uv` handles it automatically.
 
-This makes the venv available as a kernel inside Jupyter so the notebooks use the right packages:
+### 4. Register the environment as a Jupyter kernel
 
 ```bash
-pip install ipykernel
-python -m ipykernel install --user --name=servicetitan-ml --display-name "Python (servicetitan-ml)"
+uv run python -m ipykernel install --user --name=servicetitan-ml --display-name "Python (servicetitan-ml)"
 ```
 
 ### 5. Launch Jupyter
 
 ```bash
-jupyter notebook
+uv run jupyter notebook
 ```
 
 Open any notebook and select **Kernel → Change kernel → Python (servicetitan-ml)**.
+
+---
+
+## Adding or updating packages
+
+```bash
+# Add a new package
+uv pip install somepackage
+
+# Sync environment exactly to requirements.txt
+uv pip sync requirements.txt
+```
 
 ---
 
@@ -84,8 +88,8 @@ Notebook 01 uses the **IBM Telco Customer Churn** dataset — the standard churn
 
 ```bash
 # Option 1: Kaggle CLI
-pip install kaggle
-kaggle datasets download -d blastchar/telco-customer-churn --unzip
+uv pip install kaggle
+uv run kaggle datasets download -d blastchar/telco-customer-churn --unzip
 
 # Option 2: Manual download
 # https://www.kaggle.com/datasets/blastchar/telco-customer-churn
@@ -93,22 +97,6 @@ kaggle datasets download -d blastchar/telco-customer-churn --unzip
 ```
 
 All other notebooks use synthetic data generated inline — no downloads needed.
-
----
-
-## Deactivating the venv
-
-When you're done:
-
-```bash
-deactivate
-```
-
-To remove it entirely:
-
-```bash
-rm -rf .venv
-```
 
 ---
 
