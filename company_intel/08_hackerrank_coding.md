@@ -1086,3 +1086,312 @@ If you finish early or want more practice:
 5. **Implement a Consistent Hash Ring** - For distributed caching
 
 Good luck! 🚀
+
+---
+
+## Confirmed Interview Questions (From Glassdoor Reports)
+
+### What's Actually Been Reported
+
+This section is based on verified Glassdoor reviews and interview reports — not generic
+prep guides. The distinction matters because ST's coding bar is pragmatic, not algorithmic.
+
+**Confirmed problems (multiple reports):**
+- **MultiMap / custom data structure implementation** — most commonly cited, already covered above
+- **Subset sum / equal partition** — "given an array of unique integers, can it be split into two subsets with equal sums?" (LeetCode #416, DP)
+- **Shallow and deep clone** — object graph traversal, copying nested structures without shared references
+- **Incomplete instructions / hidden test cases** — multiple reviewers note you must reverse-engineer requirements from failing tests; edge case thinking > algorithm knowledge
+
+**NOT confirmed for ServiceTitan specifically:**
+- Palindrome problems — appear in generic ML interview guides but no ST-specific report
+- Two-sum, sliding window, graph problems — common everywhere but not attributed to ST
+- Tree/BST problems — no reports
+
+**Tone from reviewers:**
+> "Very pragmatic, study C# not algorithms"
+> "HackerRank with test cases that don't fully describe the problem — you have to infer edge cases"
+> "Part 1 was straightforward, Part 2 added a requirement that changed the whole approach"
+
+---
+
+## Pattern 4: Subset Sum / Equal Partition
+
+### Why This Matters at ServiceTitan
+
+Real-world analog: "Can these jobs be evenly distributed across two teams?" or
+"Can this invoice be split into two equal batches?" — partition problems show up
+in scheduling and billing contexts.
+
+### Problem Statement
+
+Given a list of unique positive integers, determine whether it can be partitioned
+into two subsets with equal sums.
+
+```
+partition([1, 5, 11, 5])  → True   (subsets [1, 5, 5] and [11])
+partition([1, 2, 3, 5])   → False  (no valid split)
+partition([])              → True   (two empty subsets, both sum to 0)
+partition([2])             → False  (can't split single element equally)
+```
+
+### Solution (Dynamic Programming)
+
+Key insight: "can we partition into two equal halves?" is equivalent to
+"does any subset sum to total/2?"
+
+```python
+def can_partition(nums: list[int]) -> bool:
+    """
+    Determine if nums can be split into two equal-sum subsets.
+    
+    Approach: reduce to subset-sum problem.
+    If total is odd, impossible. Otherwise, find subset summing to total//2.
+    
+    dp[s] = True if some subset of nums sums to s.
+    
+    Time:  O(n * total)
+    Space: O(total)
+    """
+    total = sum(nums)
+    
+    # Odd total: impossible to split equally
+    if total % 2 != 0:
+        return False
+    
+    target = total // 2
+    
+    # dp[s] = can we reach sum s using some subset?
+    # Start: only sum 0 is reachable (empty subset)
+    dp = {0}
+    
+    for num in nums:
+        # For each reachable sum, adding num creates a new reachable sum
+        # Iterate over a copy — don't modify set while iterating
+        dp = dp | {s + num for s in dp}
+        
+        # Early exit: target already reachable
+        if target in dp:
+            return True
+    
+    return target in dp
+
+
+# Tests
+print(can_partition([1, 5, 11, 5]))   # True  — [1,5,5] and [11]
+print(can_partition([1, 2, 3, 5]))    # False
+print(can_partition([]))               # True  — two empty subsets
+print(can_partition([2]))              # False
+print(can_partition([2, 2]))           # True  — [2] and [2]
+print(can_partition([100]))            # False
+```
+
+### Classic DP Array Version (what interviewers often expect)
+
+```python
+def can_partition_dp(nums: list[int]) -> bool:
+    """
+    Same logic using a boolean array instead of a set.
+    Slightly more explicit — easier to explain step-by-step in an interview.
+    
+    Time:  O(n * target)
+    Space: O(target)
+    """
+    total = sum(nums)
+    if total % 2 != 0:
+        return False
+    
+    target = total // 2
+    
+    # dp[s] = True if subset summing to s is achievable
+    dp = [False] * (target + 1)
+    dp[0] = True  # empty subset sums to 0
+    
+    for num in nums:
+        # Iterate backwards to avoid using the same number twice
+        # (this is a 0/1 knapsack — each number used at most once)
+        for s in range(target, num - 1, -1):
+            dp[s] = dp[s] or dp[s - num]
+    
+    return dp[target]
+
+
+print(can_partition_dp([1, 5, 11, 5]))   # True
+print(can_partition_dp([1, 2, 3, 5]))    # False
+```
+
+---
+
+## Pattern 5: Shallow and Deep Clone
+
+### Why This Matters at ServiceTitan
+
+Real-world analog: cloning a job record (with nested customer, equipment, line items)
+without the copy sharing references with the original. Mutation of a "copied" job
+should not affect the original.
+
+This tests whether you understand Python's reference model — a common source of bugs
+in data pipelines.
+
+### The Problem with Shallow Copy
+
+```python
+import copy
+
+# Shallow copy: top-level object is new, but nested objects are SHARED
+original = {'job_type': 'ac_repair', 'parts': ['filter', 'refrigerant']}
+shallow = original.copy()           # or copy.copy(original)
+
+shallow['parts'].append('capacitor')  # modifies BOTH — shared reference!
+print(original['parts'])  # ['filter', 'refrigerant', 'capacitor'] — BUG
+```
+
+### Shallow Clone Implementation
+
+```python
+def shallow_clone(obj):
+    """
+    Create a new object with the same top-level fields.
+    Nested objects are NOT copied — both original and clone share them.
+    
+    Use when: top-level mutation is needed but nested data won't change.
+    Time/Space: O(n) where n = number of top-level fields.
+    """
+    if isinstance(obj, dict):
+        return dict(obj)          # new dict, same value references
+    elif isinstance(obj, list):
+        return list(obj)          # new list, same element references
+    elif isinstance(obj, set):
+        return set(obj)
+    else:
+        return obj                # primitives are immutable, no copy needed
+```
+
+### Deep Clone Implementation (the interview ask)
+
+```python
+def deep_clone(obj, memo=None):
+    """
+    Recursively copy an object and ALL nested objects.
+    No reference sharing — mutation of clone never affects original.
+    
+    memo: dict tracking already-cloned objects to handle cycles.
+    Without memo, a circular reference causes infinite recursion.
+    
+    Time:  O(n) where n = total number of objects in the graph
+    Space: O(n) for memo dict + recursion stack depth
+    """
+    if memo is None:
+        memo = {}
+    
+    # Check if we've already cloned this exact object (handle cycles)
+    obj_id = id(obj)
+    if obj_id in memo:
+        return memo[obj_id]
+    
+    # Primitives and None are immutable — return as-is
+    if obj is None or isinstance(obj, (int, float, str, bool)):
+        return obj
+    
+    if isinstance(obj, dict):
+        clone = {}
+        memo[obj_id] = clone          # register BEFORE recursing (cycle safety)
+        for key, val in obj.items():
+            clone[deep_clone(key, memo)] = deep_clone(val, memo)
+        return clone
+    
+    elif isinstance(obj, list):
+        clone = []
+        memo[obj_id] = clone          # register before recursing
+        clone.extend(deep_clone(item, memo) for item in obj)
+        return clone
+    
+    elif isinstance(obj, set):
+        clone = set()
+        memo[obj_id] = clone
+        clone.update(deep_clone(item, memo) for item in obj)
+        return clone
+    
+    elif isinstance(obj, tuple):
+        # Tuples are immutable but may contain mutable objects
+        clone = tuple(deep_clone(item, memo) for item in obj)
+        memo[obj_id] = clone
+        return clone
+    
+    else:
+        # For custom objects: copy __dict__ recursively
+        # In production: check for __deepcopy__ hook first
+        import copy
+        return copy.deepcopy(obj)     # fallback for complex types
+
+
+# --- Tests ---
+# Basic nested dict
+job = {
+    'job_type': 'ac_repair',
+    'customer': {'name': 'Alice', 'address': '123 Main'},
+    'parts': ['filter', 'refrigerant'],
+}
+cloned = deep_clone(job)
+cloned['customer']['name'] = 'Bob'      # mutate clone
+cloned['parts'].append('capacitor')
+print("original customer:", job['customer']['name'])   # Alice — unchanged
+print("original parts:", job['parts'])                  # ['filter', 'refrigerant']
+
+# Cycle handling
+a = {'val': 1}
+b = {'val': 2, 'partner': a}
+a['partner'] = b                        # a -> b -> a (cycle)
+a_clone = deep_clone(a)
+print("cycle clone val:", a_clone['val'])               # 1
+print("cycle preserved:", a_clone['partner']['partner'] is a_clone)  # True
+```
+
+---
+
+## Pattern 6: Inferring Requirements from Hidden Test Cases
+
+This is the most reported differentiator in ST HackerRank reviews. The problem statement
+is intentionally underspecified — you must write defensive code that handles cases the
+prompt doesn't mention.
+
+### Common hidden edge cases by problem type
+
+**Any data structure (MultiMap, LRU, etc.):**
+- `get()` on a key that was never inserted
+- `remove()` on a key/value that doesn't exist
+- `put()` with `None` as key or value
+- Operations on a just-constructed (empty) instance
+- Duplicate `put()` calls with the same key AND value
+
+**Subset sum / partition:**
+- Empty list `[]`
+- Single element `[x]`
+- All elements identical `[2, 2, 2, 2]`
+- Total is odd (fast return False)
+- Very large values (int overflow is not a Python concern, but mention it)
+
+**Clone:**
+- `None` input
+- Circular references (the memo pattern above handles this)
+- Object containing a mix of types (int, str, list, dict nested together)
+- Empty collections `{}`, `[]`, `set()`
+
+### Strategy: write your own tests before submitting
+
+```python
+# Template: always run these before hitting Submit
+def run_edge_cases(fn, cases):
+    for inputs, expected, label in cases:
+        result = fn(*inputs) if isinstance(inputs, tuple) else fn(inputs)
+        status = "PASS" if result == expected else f"FAIL (got {result})"
+        print(f"  [{status}] {label}")
+
+# Example for can_partition:
+run_edge_cases(can_partition, [
+    (([],),        True,  "empty list"),
+    (([2],),       False, "single element"),
+    (([2, 2],),    True,  "two equal elements"),
+    (([1,2,3,5],), False, "no valid partition"),
+    (([1,5,11,5],),True,  "valid partition"),
+])
+```
