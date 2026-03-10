@@ -438,7 +438,24 @@ class MultiMapV2:
         return self.size()
     
     def __repr__(self) -> str:
-        """Readable string representation for debugging."""
+        """
+        Readable string representation for debugging.
+        
+        __repr__ is a special Python method that returns a string representation
+        of an object. It's called when you:
+        - Print the object: print(mm)
+        - View it in debugger/REPL: >>> mm
+        - Use repr(): repr(mm)
+        
+        Goal: return a string that could recreate the object (when possible)
+        Example output: "MultiMapV2({'tech1': ['HVAC', 'Plumbing']})"
+        
+        This is different from __str__ (for end users):
+        - __repr__: for developers/debugging (unambiguous)
+        - __str__: for end users (readable)
+        
+        If only __repr__ is defined, Python uses it for both.
+        """
         with self._lock:
             items = {k: list(v) for k, v in self._data.items()}
             return f"MultiMapV2({items})"
@@ -787,7 +804,19 @@ class LRUCache:
         return len(self.cache)
     
     def __repr__(self) -> str:
-        """Show cache contents in LRU order."""
+        """
+        Show cache contents in LRU order.
+        
+        __repr__ example output:
+        "LRUCache(capacity=3, items=[(1, 10), (3, 3), (4, 4)])"
+        
+        This makes debugging much easier:
+        >>> cache = LRUCache(3)
+        >>> cache.put(1, 10)
+        >>> cache.put(3, 3)
+        >>> print(cache)  # Automatically calls __repr__
+        LRUCache(capacity=3, items=[(1, 10), (3, 3)])
+        """
         return f"LRUCache(capacity={self.capacity}, items={list(self.cache.items())})"
 
 
@@ -980,6 +1009,88 @@ def test_job_scheduler():
 if __name__ == "__main__":
     test_job_scheduler()
 ```
+
+---
+
+## Python Special Methods Explained
+
+### What is `__repr__`?
+
+`__repr__` is one of Python's "magic methods" (also called "dunder methods" for "double underscore"). It defines how an object is represented as a string.
+
+**When is `__repr__` called?**
+```python
+mm = MultiMapV2()
+mm.put("key", "value")
+
+# All of these call __repr__:
+print(mm)           # Prints: MultiMapV2({'key': ['value']})
+repr(mm)            # Returns: "MultiMapV2({'key': ['value']})"
+str(mm)             # Falls back to __repr__ if __str__ not defined
+f"{mm}"             # In f-strings
+```
+
+**Why implement `__repr__`?**
+1. **Debugging:** See object state without writing custom print statements
+2. **REPL/Jupyter:** Objects display nicely in interactive sessions
+3. **Logging:** Better log messages automatically
+4. **Testing:** Easier to see what went wrong
+
+**Example without `__repr__`:**
+```python
+class BadMultiMap:
+    def __init__(self):
+        self._data = {}
+
+mm = BadMultiMap()
+print(mm)  # <__main__.BadMultiMap object at 0x7f8b3c4d5e80>
+# ❌ Useless for debugging!
+```
+
+**Example with `__repr__`:**
+```python
+class GoodMultiMap:
+    def __init__(self):
+        self._data = {}
+    
+    def __repr__(self):
+        return f"GoodMultiMap({self._data})"
+
+mm = GoodMultiMap()
+mm._data = {"key": ["value1", "value2"]}
+print(mm)  # GoodMultiMap({'key': ['value1', 'value2']})
+# ✅ Immediately see the state!
+```
+
+**`__repr__` vs `__str__`:**
+
+| Method | Purpose | Audience | Goal |
+|--------|---------|----------|------|
+| `__repr__` | Unambiguous representation | Developers | Should be valid Python code if possible |
+| `__str__` | Readable representation | End users | Human-friendly |
+
+```python
+from datetime import datetime
+
+dt = datetime(2026, 3, 10, 7, 0, 0)
+
+# __repr__: for developers (can recreate object)
+repr(dt)  # "datetime.datetime(2026, 3, 10, 7, 0)"
+
+# __str__: for users (readable)
+str(dt)   # "2026-03-10 07:00:00"
+```
+
+**Best practices for `__repr__`:**
+1. Include class name: `f"ClassName({...})"`
+2. Include key attributes that define the object's state
+3. Ideally, output should be valid Python: `eval(repr(obj)) == obj`
+4. Keep it concise (don't dump huge data structures)
+
+**Interview tip:** Always implement `__repr__` for custom classes. It shows:
+- You understand Python's object model
+- You write debuggable code
+- You think about developer experience
 
 ---
 
