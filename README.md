@@ -1,6 +1,6 @@
 # ServiceTitan ML Portfolio
 
-15 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
+20 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
 home services SaaS platform, plus company intelligence and interview prep.
 
 ---
@@ -24,6 +24,11 @@ home services SaaS platform, plus company intelligence and interview prep.
 | [13](13_rag_architecture.ipynb) | **RAG Architecture** | Sparse + dense retrieval, RRF fusion, re-ranking, Hit@K / MRR |
 | [14](14_realtime_ml_serving.ipynb) | **Real-Time ML Serving** | ONNX, quantization, batching, latency benchmarks, serving patterns |
 | [15](15_multitenant_ml.ipynb) | **Multi-Tenant ML** | Global vs per-tenant models, cold start, DP, Atlas personalization |
+| [16](16_advanced_dict_structures.ipynb) | **Advanced Data Structures** | MultiMap, LRU cache, trie, segment tree, O(n) complexity analysis |
+| [17](17_vision_transformers_vit.ipynb) | **Vision Transformers (ViT)** | Patch embedding, multi-head attention, fine-tuning, use-case mapping |
+| [18](18_dataclasses_containers.ipynb) | **Dataclasses & Type-Safe Containers** | `@dataclass`, `Protocol`, generics, validated domain objects |
+| [19](19_ml_design_patterns.ipynb) | **ML Design Patterns** | Strategy, Factory/Registry, Observer/Callback, Template Method, Adapter |
+| [20](20_agentic_ai_llm_selection.ipynb) | **Agentic AI & LLM Selection** | ReAct agents, model routing, Atlas architecture, multi-tenant guardrails, cost modeling |
 
 ---
 
@@ -42,6 +47,7 @@ See the [`company_intel/`](company_intel/) folder:
 | [07_references.md](company_intel/07_references.md) | All sources with URLs |
 | [08_hackerrank_coding.md](company_intel/08_hackerrank_coding.md) | MultiMap, LRU cache, async patterns with O(n) analysis |
 | [09_ml_system_design.md](company_intel/09_ml_system_design.md) | 6 system design problems with Azure ML-specific approaches |
+| [10_transformers_vit_use_cases.md](company_intel/10_transformers_vit_use_cases.md) | ViT use cases, attention maps, fine-tuning strategies for ST domains |
 
 ---
 
@@ -105,3 +111,5 @@ uv run kaggle datasets download -d blastchar/telco-customer-churn --unzip
 - **SHAP for explainability** — models need to be explainable to be operationally useful
 - **Feedback loop design** — every deployed model changes the data it's trained on
 - **Humans in the loop** — consequential actions (dispatch, pricing) require human confirmation
+- **Agentic safety** — multi-step agents require trace logging, guardrails, and human confirmation gates on write actions
+- **Cost-aware model selection** — cascade routing and model tiering are engineering requirements at ST scale
