@@ -1,6 +1,6 @@
 # ServiceTitan ML Portfolio
 
-20 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
+21 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
 home services SaaS platform, plus company intelligence and interview prep.
 
 ---
@@ -29,6 +29,7 @@ home services SaaS platform, plus company intelligence and interview prep.
 | [18](18_dataclasses_containers.ipynb) | **Dataclasses & Type-Safe Containers** | `@dataclass`, `Protocol`, generics, validated domain objects |
 | [19](19_ml_design_patterns.ipynb) | **ML Design Patterns** | Strategy, Factory/Registry, Observer/Callback, Template Method, Adapter |
 | [20](20_agentic_ai_llm_selection.ipynb) | **Agentic AI & LLM Selection** | ReAct agents, model routing, Atlas architecture, multi-tenant guardrails, cost modeling |
+| [21](21_agentic_router_poc.ipynb) | **Agentic Router POC** | TF-IDF+LR router, LoRA LLM path, entity extraction, loop-back dispatch, confidence gating |
 
 ---
 
