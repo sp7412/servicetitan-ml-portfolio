@@ -21,12 +21,15 @@ class VersionedMultiMap:
         v2 = m.add("customer_1", "high_value")   # version 2
         v3 = m.remove("customer_1", "vip")       # version 3
         
-        m.get("customer_1")              # ["high_value"] (current state)
+        # Alternative syntax using += operator
+        m += ("customer_1", "preferred")         # version 4
+        
+        m.get("customer_1")              # ["high_value", "preferred"] (current state)
         m.get_at("customer_1", 2)        # ["vip", "high_value"] (historical)
     """
 
     def __init__(self) -> None:
-        """Initialize empty multimap with version tracking."""
+        """Constructor: Initialize empty multimap with version tracking."""
         # Current state: key -> list of values
         self._current: dict[Any, list[Any]] = defaultdict(list)
         
@@ -178,6 +181,26 @@ class VersionedMultiMap:
             m.size()  # 3 (not 2)
         """
         return self._size
+
+    def __iadd__(self, key_value: Tuple[Any, Any]) -> "VersionedMultiMap":
+        """Support += operator for adding key-value pairs.
+        
+        This allows syntactic sugar: m += (key, value) instead of m.add(key, value)
+        
+        Args:
+            key_value: Tuple of (key, value) to add
+            
+        Returns:
+            Self (for chaining)
+            
+        Example:
+            m = VersionedMultiMap()
+            m += ("customer_1", "vip")      # Same as m.add("customer_1", "vip")
+            m += ("customer_1", "loyal")    # Can chain multiple times
+        """
+        key, value = key_value
+        self.add(key, value)
+        return self
 
     def __repr__(self) -> str:
         """Return debug representation showing current version and size."""
