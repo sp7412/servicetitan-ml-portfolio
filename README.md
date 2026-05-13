@@ -1,11 +1,13 @@
 # ServiceTitan ML Portfolio
 
-24 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
+29 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
 home services SaaS platform, plus company intelligence and interview prep.
 
 ---
 
 ## Notebooks
+
+### Core ML/DS Problems (1-21)
 
 | # | Topic | Key Techniques |
 |---|---|---|
@@ -30,6 +32,21 @@ home services SaaS platform, plus company intelligence and interview prep.
 | [19](19_ml_design_patterns.ipynb) | **ML Design Patterns** | Strategy, Factory/Registry, Observer/Callback, Template Method, Adapter |
 | [20](20_agentic_ai_llm_selection.ipynb) | **Agentic AI & LLM Selection** | ReAct agents, model routing, Atlas architecture, multi-tenant guardrails, cost modeling |
 | [21](21_agentic_router_poc.ipynb) | **Agentic Router POC** | TF-IDF+LR router, LoRA LLM path, entity extraction, loop-back dispatch, confidence gating |
+
+### Advanced Topics (22-26)
+
+| # | Topic | Key Techniques |
+|---|---|---|
+| [22](22_llm_eval_guardrails.ipynb) | **LLM Evaluation & Guardrails** | RAGAS metrics, DeepEval assertions, injection/PII guards, LLM-as-judge cascade |
+| [23](23_financial_forecasting.ipynb) | **Financial Forecasting & Optimization** | Hierarchical forecasting, quantile GBMs, anomaly detection, SLSQP budget allocation, Monte Carlo |
+| [24](24_mcp_server_servicetitan.ipynb) | **MCP Server for ServiceTitan** | JSON-RPC 2.0 protocol, tenant isolation, audit logs, LangGraph agent wiring |
+| [25](25_causal_inference.ipynb) | **Causal Inference & Experiments** | Power analysis, CUPED variance reduction, switchback experiments, DiD, PSM |
+| [26](26_onboarding_acceleration.ipynb) | **Customer Onboarding Acceleration** | Kaplan-Meier survival, GBM propensity scoring, GenAI intervention routing, A/B evaluation |
+
+### Coding Interview Prep (27-29)
+
+| # | Topic | Key Techniques |
+|---|---|---|
 | [27](27_coding_servicetitan_top5.ipynb) | **Coding: ServiceTitan Top 5** | VersionedMultiMap, LRU (linked-list), async fetch, priority scheduler, rate limiter |
 | [28](28_coding_leetcode_top5.ipynb) | **Coding: Classic LeetCode Top 5** | Two Sum, Valid Parens, Merge Intervals, LRU (OrderedDict), Course Schedule |
 | [29](29_coding_ml_engineer_top5.ipynb) | **Coding: ML Engineer Top 5** | Softmax + CE (stable), K-means, Top-K heap, Rolling stats, Scaled dot-product attention |
