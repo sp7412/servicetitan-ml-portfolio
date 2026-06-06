@@ -1,7 +1,12 @@
 # ServiceTitan ML Portfolio
 
-29 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
+37 end-to-end Jupyter notebooks covering ML problem domains relevant to ServiceTitan's
 home services SaaS platform, plus company intelligence and interview prep.
+
+The first 29 notebooks were built for the Staff AI Engineer (Voice Agents) role.
+Notebooks 30-37 are targeted at the Agent OS Platform Engineering role (JR114907)
+and cover the core platform primitives: agent runtime, typed tool contracts,
+evaluation infrastructure, and production observability.
 
 ---
 
@@ -33,7 +38,7 @@ home services SaaS platform, plus company intelligence and interview prep.
 | [20](20_agentic_ai_llm_selection.ipynb) | **Agentic AI & LLM Selection** | ReAct agents, model routing, Atlas architecture, multi-tenant guardrails, cost modeling |
 | [21](21_agentic_router_poc.ipynb) | **Agentic Router POC** | TF-IDF+LR router, LoRA LLM path, entity extraction, loop-back dispatch, confidence gating |
 
-### Advanced Topics (22-26)
+### Advanced Topics (22-29)
 
 | # | Topic | Key Techniques |
 |---|---|---|
@@ -42,14 +47,26 @@ home services SaaS platform, plus company intelligence and interview prep.
 | [24](24_mcp_server_servicetitan.ipynb) | **MCP Server for ServiceTitan** | JSON-RPC 2.0 protocol, tenant isolation, audit logs, LangGraph agent wiring |
 | [25](25_causal_inference.ipynb) | **Causal Inference & Experiments** | Power analysis, CUPED variance reduction, switchback experiments, DiD, PSM |
 | [26](26_onboarding_acceleration.ipynb) | **Customer Onboarding Acceleration** | Kaplan-Meier survival, GBM propensity scoring, GenAI intervention routing, A/B evaluation |
-
-### Coding Interview Prep (27-29)
-
-| # | Topic | Key Techniques |
-|---|---|---|
 | [27](27_coding_servicetitan_top5.ipynb) | **Coding: ServiceTitan Top 5** | VersionedMultiMap, LRU (linked-list), async fetch, priority scheduler, rate limiter |
 | [28](28_coding_leetcode_top5.ipynb) | **Coding: Classic LeetCode Top 5** | Two Sum, Valid Parens, Merge Intervals, LRU (OrderedDict), Course Schedule |
 | [29](29_coding_ml_engineer_top5.ipynb) | **Coding: ML Engineer Top 5** | Softmax + CE (stable), K-means, Top-K heap, Rolling stats, Scaled dot-product attention |
+
+### Agent OS Platform Engineering (30-37)
+
+Targeted at ServiceTitan's Agent OS Platform role (JR114907). These notebooks
+cover the core engineering primitives the JD describes: agent runtime, typed
+tool contracts, evaluation infrastructure, and production observability.
+
+| # | Topic | Key Techniques | Agent OS Pillar |
+|---|---|---|---|
+| [30](30_agent_runtime_durable_execution.ipynb) | **Agent Runtime: Durable Execution** | SqliteSaver checkpointing, pause/resume, idempotency tokens, tenant-scoped thread IDs, failure recovery | Agent runtime and workflow execution |
+| [31](31_typed_tool_contracts_safety.ipynb) | **Typed Tool Contracts & Action Safety** | Pydantic v2 frozen models, precondition validators, scoped permission model, immutable audit log, rollback/compensating transactions | Typed tools and action contracts |
+| [32](32_agent_eval_harness.ipynb) | **Agent Evaluation Harness** | Offline scenario library, trajectory scoring (exact/prefix/edit-distance), LLM-as-judge with rubric, regression detection, autonomy promotion gates | Evaluation and observability |
+| [33](33_autonomous_research_agent.ipynb) | **Autonomous Research Agent** | LangGraph ReAct loop, SQLite checkpoint, multi-agent pipeline, autonomous scheduler, dry-run mode | Agent runtime and workflow execution |
+| [34](34_agentic_anomaly_detection.ipynb) | **Agentic Anomaly Detection over Structured Streams** | Tool-calling agent over DuckDB, five typed tools, ground-truth F1 validation, Ollama local LLM, auditable reasoning trace | Typed tools and action contracts |
+| [35](35_meta_prompt_generator.ipynb) | **Meta-Prompt Generator with LLM-as-Judge** | LangChain LCEL, variant generation, LLM-as-judge scoring, CoT rationale, bias taxonomy, regression tracking | Evaluation and observability |
+| [36](36_local_rag_pipeline.ipynb) | **Local RAG Pipeline: FAISS, Hybrid Retrieval & Memory** | FAISS IndexFlatIP, BM25 sparse retrieval, RRF fusion, conversational memory, provenance tracking | Context and memory systems |
+| [37](37_langfuse_context_optimization.ipynb) | **Context Optimization with Langfuse Tracing** | Self-hosted Langfuse tracing, chunking strategy comparison, top-k experiments, context budget management, freshness TTL | Context and memory systems |
 
 ---
 
@@ -134,3 +151,6 @@ uv run kaggle datasets download -d blastchar/telco-customer-churn --unzip
 - **Humans in the loop** — consequential actions (dispatch, pricing) require human confirmation
 - **Agentic safety** — multi-step agents require trace logging, guardrails, and human confirmation gates on write actions
 - **Cost-aware model selection** — cascade routing and model tiering are engineering requirements at ST scale
+- **Typed contracts over untyped dicts** — Pydantic v2 frozen models as the boundary between LLM reasoning and system writes
+- **Idempotency by default** — every tool that writes to a system of record must be safe to retry
+- **Observability first** — Langfuse tracing, W&B, and structured audit logs are not optional in production
